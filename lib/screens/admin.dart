@@ -1,4 +1,6 @@
+import 'package:e_commerce_admin_app/db/category.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 enum Page { dashboard, manage }
 
@@ -12,11 +14,14 @@ class Admin extends StatefulWidget {
 class _AdminState extends State<Admin> {
   Page selectedPage = Page.dashboard;
   MaterialColor active = Colors.red;
+  MaterialColor activeText = Colors.purple;
   MaterialColor notActive = Colors.grey;
   TextEditingController categoryController = TextEditingController();
 
   TextEditingController brandController = TextEditingController();
   GlobalKey<FormState> categoryFormKey = GlobalKey();
+
+  CategoryService categoryService = CategoryService();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,7 +39,11 @@ class _AdminState extends State<Admin> {
                     Icons.dashboard,
                     color: selectedPage == Page.dashboard ? active : notActive,
                   ),
-                  label: const Text("Dashboard"),
+                  label: Text("Dashboard",
+                      style: TextStyle(
+                          color: selectedPage == Page.dashboard
+                              ? activeText
+                              : notActive)),
                 ),
               ),
               Expanded(
@@ -46,9 +55,13 @@ class _AdminState extends State<Admin> {
                   },
                   icon: Icon(
                     Icons.sort,
-                    color: selectedPage == Page.dashboard ? active : notActive,
+                    color: selectedPage == Page.manage ? active : notActive,
                   ),
-                  label: const Text("Manage"),
+                  label: Text("Manage",
+                      style: TextStyle(
+                          color: selectedPage == Page.manage
+                              ? activeText
+                              : notActive)),
                 ),
               ),
             ],
@@ -94,7 +107,7 @@ class _AdminState extends State<Admin> {
                   child: Card(
                       child: ListTile(
                     title: TextButton.icon(
-                      onPressed: null,
+                      onPressed: () {},
                       icon: const Icon(Icons.people_outline),
                       label: const Text("Users"),
                     ),
@@ -110,7 +123,7 @@ class _AdminState extends State<Admin> {
                   child: Card(
                       child: ListTile(
                     title: TextButton.icon(
-                      onPressed: null,
+                      onPressed: () {},
                       icon: const Icon(Icons.category),
                       label: const Text("Categories"),
                     ),
@@ -252,7 +265,11 @@ class _AdminState extends State<Admin> {
       ),
       actions: [
         TextButton.icon(
-          onPressed: () {},
+          onPressed: () {
+            categoryService.createCategory(categoryController.text);
+            Fluttertoast.showToast(msg: 'Category Created');
+            Navigator.pop(context);
+          },
           icon: const Icon(Icons.add),
           label: const Text('Add'),
         ),
