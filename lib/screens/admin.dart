@@ -13,7 +13,10 @@ class _AdminState extends State<Admin> {
   Page selectedPage = Page.dashboard;
   MaterialColor active = Colors.red;
   MaterialColor notActive = Colors.grey;
+  TextEditingController categoryController = TextEditingController();
 
+  TextEditingController brandController = TextEditingController();
+  GlobalKey<FormState> categoryFormKey = GlobalKey();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -204,7 +207,9 @@ class _AdminState extends State<Admin> {
             ListTile(
               leading: const Icon(Icons.add_circle),
               title: const Text("Add Category"),
-              onTap: () {},
+              onTap: () {
+                categoryAlert();
+              },
             ),
             const Divider(),
             ListTile(
@@ -229,5 +234,37 @@ class _AdminState extends State<Admin> {
       default:
         return Container();
     }
+  }
+
+  void categoryAlert() {
+    var alert = AlertDialog(
+      content: Form(
+        key: categoryFormKey,
+        child: TextFormField(
+          controller: categoryController,
+          validator: (value) {
+            if (value!.isEmpty) {
+              return 'Catgeory cannot be empty';
+            }
+          },
+          decoration: const InputDecoration(hintText: 'Add Category'),
+        ),
+      ),
+      actions: [
+        TextButton.icon(
+          onPressed: () {},
+          icon: const Icon(Icons.add),
+          label: const Text('Add'),
+        ),
+        TextButton.icon(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: const Icon(Icons.close),
+          label: const Text('Cancel'),
+        ),
+      ],
+    );
+    showDialog(context: context, builder: (_) => alert);
   }
 }
