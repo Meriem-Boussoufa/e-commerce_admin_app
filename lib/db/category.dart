@@ -12,4 +12,10 @@ class CategoryService {
         .doc(category)
         .set({'categoryName': name});
   }
+
+  Future<List<DocumentSnapshot>> getCategories() {
+    return firestore.collection('categories').get().then((snaps) {
+      return snaps.docs;
+    });
+  }
 }

@@ -1,6 +1,9 @@
 import 'package:e_commerce_admin_app/db/category.dart';
+import 'package:e_commerce_admin_app/screens/add_product.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+
+import '../db/brand.dart';
 
 enum Page { dashboard, manage }
 
@@ -17,11 +20,12 @@ class _AdminState extends State<Admin> {
   MaterialColor activeText = Colors.purple;
   MaterialColor notActive = Colors.grey;
   TextEditingController categoryController = TextEditingController();
-
   TextEditingController brandController = TextEditingController();
   GlobalKey<FormState> categoryFormKey = GlobalKey();
+  GlobalKey<FormState> brandFormKey = GlobalKey();
 
   CategoryService categoryService = CategoryService();
+  BrandService brandService = BrandService();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -208,7 +212,10 @@ class _AdminState extends State<Admin> {
             ListTile(
               leading: const Icon(Icons.add),
               title: const Text("Add Product"),
-              onTap: () {},
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => const AddProduct()));
+              },
             ),
             const Divider(),
             ListTile(
@@ -234,7 +241,9 @@ class _AdminState extends State<Admin> {
             ListTile(
               leading: const Icon(Icons.add_circle_outline),
               title: const Text("Add Brand"),
-              onTap: () {},
+              onTap: () {
+                brandAlert();
+              },
             ),
             const Divider(),
             ListTile(
@@ -268,6 +277,42 @@ class _AdminState extends State<Admin> {
           onPressed: () {
             categoryService.createCategory(categoryController.text);
             Fluttertoast.showToast(msg: 'Category Created');
+            Navigator.pop(context);
+          },
+          icon: const Icon(Icons.add),
+          label: const Text('Add'),
+        ),
+        TextButton.icon(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: const Icon(Icons.close),
+          label: const Text('Cancel'),
+        ),
+      ],
+    );
+    showDialog(context: context, builder: (_) => alert);
+  }
+
+  void brandAlert() {
+    var alert = AlertDialog(
+      content: Form(
+        key: brandFormKey,
+        child: TextFormField(
+          controller: brandController,
+          validator: (value) {
+            if (value!.isEmpty) {
+              return 'Brand cannot be empty';
+            }
+          },
+          decoration: const InputDecoration(hintText: 'Add Brand'),
+        ),
+      ),
+      actions: [
+        TextButton.icon(
+          onPressed: () {
+            brandService.createBrand(brandController.text);
+            Fluttertoast.showToast(msg: 'Brand Created');
             Navigator.pop(context);
           },
           icon: const Icon(Icons.add),
